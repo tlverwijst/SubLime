@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+    <category label="Debug">
+        <setting id="debug" type="bool" label="Debugging on" default="false" />
+    </category>
+</settings>
