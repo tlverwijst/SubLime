@@ -8,7 +8,7 @@
 
     <extension point="xbmc.addon.metadata">
         <summary>Subtitle cleaner for Kodi</summary>
-        <description>Subtitles come in a lot of different markups. HI tags, different font shapes, colours and sizes, ALL CAPS, author/syncher credits and nowadays even advertisements. Not all of these are just as bad, but they can be annoying. Let's you choose which markup you wanna keep, and which you prefer to filter out.</description>
+        <description>Subtitles come in a lot of different markups. HI tags, different font shapes, colours and sizes, ALL CAPS, author/syncher credits and nowadays even advertisements. Not all of these are just as bad, but they can be annoying. SubLime lets you choose which markup you wanna keep, and which you prefer to filter out.</description>
         <platform>all</platform>
     </extension>
 </addon>
