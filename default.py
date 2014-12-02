@@ -41,7 +41,7 @@ font_tags = re.compile('(<font[^>]*>)|(<\/font>)')
 
 
 #specials
-capital_start = re.compile('^[A-Z]*[\s]*:[\s]*') #starting with capitalized word and colon
+capital_start = re.compile('^[=\*=\*=\*=[\s]*]*[A-Z0-9\s]*:[\s]*') #starting with capitalized word and colon
 dash_start  = re.compile('^[\-]+[\s]*') #lines starting with a dash (-)
 
 replace_tag = re.compile('=\*=\*=\*=[\s]*')
@@ -190,8 +190,8 @@ class Sublime(xbmc.Player):
 
                 line = self.simpleClean(line, paren_m)
                 line = self.simpleClean(line, brace_m)
-                line = self.simpleClean(line, capital_start)
                 line = self.simpleClean(line, dash_start)
+                line = self.simpleClean(line, capital_start)
                 line = self.simpleClean(line, font_tags)
 
                 line = self.cleanBlacklisted(line)
