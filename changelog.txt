@@ -1,2 +1,6 @@
+v1.1
+- Fix for too greedy regex
+- Some minor cleanup
+
 v1.0
 - Initial version

@@ -39,9 +39,8 @@ punct = re.compile('^[\W]+$')
 # tags
 font_tags = re.compile('(<font[^>]*>)|(<\/font>)')
 
-
 #specials
-capital_start = re.compile('^[=\*=\*=\*=[\s]*]*[A-Z0-9\s]*:[\s]*') #starting with capitalized word and colon
+capital_start = re.compile('^[=\*=\*=\*=[\s]*]*[A-Z]+[0-9\s]*:[\s]*') #starting with capitalized word and colon
 dash_start  = re.compile('^[\-]+[\s]*') #lines starting with a dash (-)
 
 replace_tag = re.compile('=\*=\*=\*=[\s]*')
@@ -126,7 +125,6 @@ class Sublime(xbmc.Player):
         count = 0
         sub_files = []
 
-
         # get the path of the playing file
         log('checking for subs in ' + path);
 
@@ -143,7 +141,7 @@ class Sublime(xbmc.Player):
                 if xbmcvfs.exists( full_file_path +'.'+sublime_extension ) == False:
                     count = count+1
                     sub_files.append( f )
-                    log("found unprocessed subtitle:" + str(full_file_path) )
+                    log("Found unprocessed subtitle:" + str(full_file_path) )
 
         return {'count': count, 'files':sub_files}
 
@@ -295,7 +293,6 @@ class Sublime(xbmc.Player):
                     count = count+1
 
                     if os.path.splitext(f)[1] in supported:
-                        sub_path = os.path.join(path, f)
                         log("start cleaning file "+ str(count)+" of "+str(sub_file_count)+" \n:" +str(f) )
                         cleaning = self.clean(f, path, files_to_process, count)
                         sub_file_count = sub_file_count - count
@@ -305,14 +302,11 @@ class Sublime(xbmc.Player):
                             log("User cancelled during cleaning of files")
                             return
 
-                # get the current playing item
-                current_vdo = xbmc.Player().getPlayingFile()
-
                 # stop & start player to refresh the subtitle stream
-                log("resuming" + str(current_vdo))
+                log("resuming" + str(playing))
                 xbmc.Player().stop()
                 xbmc.sleep(1000)
-                xbmc.Player().play(current_vdo)
+                xbmc.Player().play(playing)
 
             else:
                 xbmc.Player().pause()
