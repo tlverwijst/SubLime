@@ -30,8 +30,8 @@ supported = ['.srt']
 # REGEX
 
 #including start & end in different lines
-paren_m = re.compile('(\((.+)?\)|\((.+)?|^(.+)?\))')
-brace_m = re.compile('(\[(.+)?\]|\[(.+)?|^(.+)?\])')
+paren = re.compile('(\((.+)?\)|\((.+)?|^(.+)?\))')
+brace = re.compile('(\[(.+)?\]|\[(.+)?|^(.+)?\])')
 
 # interpunction -> non alphanumeric leftovers
 punct = re.compile('^[\W]+$')
@@ -188,8 +188,8 @@ class Sublime(xbmc.Player):
             dirty = True
             if dirty == True:
 
-                line = self.simpleClean(line, paren_m)
-                line = self.simpleClean(line, brace_m)
+                line = self.simpleClean(line, paren)
+                line = self.simpleClean(line, brace)
                 line = self.simpleClean(line, dash_start)
                 line = self.simpleClean(line, capital_start)
                 line = self.simpleClean(line, font_tags)
