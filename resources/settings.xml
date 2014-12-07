@@ -2,6 +2,7 @@
 <settings>
     <category label="General">
         <setting id="auto_start" type="bool" label="Start cleaning automatically" default="false" />
+        <setting id="keep_source" type="bool" label="Back up original file" default="true" />
     </category>
 
     <category label="Filters">

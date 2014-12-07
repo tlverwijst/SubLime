@@ -23,7 +23,6 @@ __cwd__         = xbmc.translatePath(__addon__.getAddonInfo('path')).decode("utf
 __resource__    = os.path.join(__cwd__, 'resources')
 __data__        = os.path.join(__resource__, 'data')
 
-sublime_extension = 'original'
 supported = ['.srt']
 
 ################
@@ -80,11 +79,16 @@ class Sublime(xbmc.Player):
     def init_properties(self):
         self.debug          = self.getSetting("debug",True)
         self.__replace__    = "=*=*=*="
+        if self.debug == True:
+            self.sublime_extension   = ".sublime.debug"
+        else:
+            self.sublime_extension   = ".sublime.original"
 
         # general
         self.show_notifications = self.getSetting("show_notifications",True)
         self.auto_start         = self.getSetting("auto_start",True)
-        self.keep_source        = True 
+        self.keep_source        = self.getSetting("keep_source",True)
+
         # filter settings
         self.flt_brace      = self.getSetting("flt_brace",True)
         self.flt_paren      = self.getSetting("flt_paren",True)
@@ -154,11 +158,13 @@ class Sublime(xbmc.Player):
             # check if any of them are supported subtitle files
             if os.path.splitext(f)[1] in supported:
 
-                # if so, is there a already a backup file present?
-                if xbmcvfs.exists( full_file_path +'.'+sublime_extension ) == False:
-                    count = count+1
-                    sub_files.append( f )
-                    log("Found unprocessed subtitle:" + str(full_file_path) )
+                # should sublime ignore this file?
+                if not xbmcvfs.exists(full_file_path+'.sublime.ignore') == True:
+                    # if there are supported  files, is there already a backup or debug file present?
+                    if xbmcvfs.exists( full_file_path + self.sublime_extension) == False or (xbmcvfs.exists( full_file_path +'.sublime.debug') == False and self.debug == False):
+                        count = count+1
+                        sub_files.append( f )
+                        log("Found unprocessed subtitle:" + str(full_file_path) )
 
         return {'count': count, 'files':sub_files}
 
@@ -203,22 +209,16 @@ class Sublime(xbmc.Player):
             if dirty == True:
 
                 if self.flt_paren == True:
-                    log('cleaning parens')
                     line = self.simpleClean(line, paren)
                 if self.flt_brace == True:
-                    log('cleaning brace')
                     line = self.simpleClean(line, brace)
                 if self.flt_dash == True:
-                    log('cleaning dash')
                     line = self.simpleClean(line, dash_start)
 
                 if self.flt_colon_pr == True:
-                    log('cleaning colon')
                     if self.flt_colon_capped_pr == True:
-                        log('capped True')
                         line = self.simpleClean(line, colon_prefix_capped)
                     else:
-                        log('capped false')
                         line = self.simpleClean(line, colon_prefix)
 
                 line = self.simpleClean(line, font_tags)
@@ -226,7 +226,6 @@ class Sublime(xbmc.Player):
 
                 # if the line is empty here, it means it was always empty, so just add it
                 if len(line)==0:
-                    # print 'adding empty line'
                     cleanlines.append(line+'\n')
 
                 # remove leftover particles (., etc)
@@ -266,11 +265,16 @@ class Sublime(xbmc.Player):
         f.close()
 
         log('original exists?')
-        log(xbmcvfs.exists(full_file_path+'.original'))
+        log(xbmcvfs.exists(full_file_path+self.sublime_extension))
 
         if self.keep_source == True:
+            if self.debug == False and xbmcvfs.exists(full_file_path+'.sublime.debug') == True:
+                log('renaming .debug-file to '+ self.sublime_extension + '-file')
+                xbmcvfs.rename(full_file_path+'.sublime.debug',full_file_path+self.sublime_extension);
 
-            if xbmcvfs.exists(full_file_path+'.original') == True:
+                log("Removing original file")
+                xbmcvfs.delete(full_file_path)
+            elif xbmcvfs.exists(full_file_path+self.sublime_extension) == True:
                 # remove the original file
                 log("backup exists, skipping backup...")
                 log("removing original file")
@@ -278,13 +282,17 @@ class Sublime(xbmc.Player):
             else:
                 progressDialog.update(self.getPercentage(96, total_files, current_count), "Backing up original file...")
                 # rename the original file [filename].srt.bak
-                print "rename original file"
-                xbmcvfs.rename(full_file_path,full_file_path+'.original');
+                log("Renaming original file")
+                xbmcvfs.rename(full_file_path,full_file_path+self.sublime_extension);
         else:
-
+            notify('Not backing up file')
             # remove the original file
-            log("removing orginal file")
+            log("Removing orginal file")
             xbmcvfs.delete(full_file_path)
+
+            # open file and load into buffer
+            f = xbmcvfs.File(full_file_path+'.sublime.ignore','w')
+            f.close()
 
         # rename tempfile to original filename
         progressDialog.update(self.getPercentage(98, total_files, current_count), "Writing new file...")
@@ -302,8 +310,8 @@ class Sublime(xbmc.Player):
         #get file being played
         playing = xbmc.Player().getPlayingFile()
         path = os.path.split(playing)[0]
-        subsFound = self.findSubs(path)
 
+        subsFound = self.findSubs(path)
         sub_file_count = subsFound['count']
 
         if sub_file_count >0:
@@ -325,7 +333,7 @@ class Sublime(xbmc.Player):
                     count = count+1
 
                     if os.path.splitext(f)[1] in supported:
-                        log("start cleaning file "+ str(count)+" of "+str(sub_file_count)+" \n:" +str(f) )
+                        log("start cleaning file %s of %s \n: %s" % ( count, sub_file_count, f ) )
                         cleaning = self.clean(f, path, files_to_process, count)
                         sub_file_count = sub_file_count - count
 
