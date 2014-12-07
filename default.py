@@ -40,7 +40,8 @@ punct = re.compile('^[\W]+$')
 font_tags = re.compile('(<font[^>]*>)|(<\/font>)')
 
 #specials
-capital_start = re.compile('^[=\*=\*=\*=[\s]*]*[A-Z]+[A-Z0-9\s]*:[\s]*') #starting with any word and colon
+colon_prefix = re.compile('^[=\*=\*=\*=[\s]*]*[A-z]+[A-z0-9\s]*:[\s]*') #starting with any word and colon
+colon_prefix_capped = re.compile('^[=\*=\*=\*=[\s]*]*[A-Z]+[A-Z0-9\s]*:[\s]*') #starting with capitalized word and colon
 dash_start  = re.compile('^[\-]+[\s]*') #lines starting with a dash (-)
 
 replace_tag = re.compile('=\*=\*=\*=[\s]*')
@@ -69,13 +70,29 @@ class Sublime(xbmc.Player):
         xbmc.Player.__init__(self)
         self.init_properties()
 
+    def getSetting(self, setting, boolean=False):
+
+        if boolean == True:
+            return __addon__.getSetting(setting) == 'true'
+        else:
+            return __addon__.getSetting(setting)
 
     def init_properties(self):
-        self.debug = __addon__.getSetting("debug") == 'true'
-        self.show_notifications = __addon__.getSetting("show_notifications") == 'true'
-        self.keep_source    = True
-        self.autoclean      = False
+        self.debug          = self.getSetting("debug",True)
         self.__replace__    = "=*=*=*="
+
+        # general
+        self.show_notifications = self.getSetting("show_notifications",True)
+        self.auto_start         = self.getSetting("auto_start",True)
+        self.keep_source        = True 
+        # filter settings
+        self.flt_brace      = self.getSetting("flt_brace",True)
+        self.flt_paren      = self.getSetting("flt_paren",True)
+        self.flt_dash       = self.getSetting("flt_dash_pr",True)
+        self.flt_colon_pr   = self.getSetting("flt_colon_pr",True)
+        self.flt_colon_capped_pr = self.getSetting("flt_colon_capped_pr",True)
+
+        self.flt_font_tags  = True
 
         # get blacklist file
         f = xbmcvfs.File(os.path.join(__data__,'blacklist.txt'))
@@ -185,10 +202,25 @@ class Sublime(xbmc.Player):
             dirty = True
             if dirty == True:
 
-                line = self.simpleClean(line, paren)
-                line = self.simpleClean(line, brace)
-                line = self.simpleClean(line, dash_start)
-                line = self.simpleClean(line, capital_start)
+                if self.flt_paren == True:
+                    log('cleaning parens')
+                    line = self.simpleClean(line, paren)
+                if self.flt_brace == True:
+                    log('cleaning brace')
+                    line = self.simpleClean(line, brace)
+                if self.flt_dash == True:
+                    log('cleaning dash')
+                    line = self.simpleClean(line, dash_start)
+
+                if self.flt_colon_pr == True:
+                    log('cleaning colon')
+                    if self.flt_colon_capped_pr == True:
+                        log('capped True')
+                        line = self.simpleClean(line, colon_prefix_capped)
+                    else:
+                        log('capped false')
+                        line = self.simpleClean(line, colon_prefix)
+
                 line = self.simpleClean(line, font_tags)
                 line = self.cleanBlacklisted(line)
 
@@ -280,7 +312,7 @@ class Sublime(xbmc.Player):
             #pause playback
             xbmc.Player().pause()
 
-            if self.autoclean == True:
+            if self.auto_start == True:
                 confirmed = True
                 log("Auto clean is enabled")
             else:

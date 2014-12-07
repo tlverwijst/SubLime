@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
+    <category label="General">
+        <setting id="auto_start" type="bool" label="Start cleaning automatically" default="false" />
+    </category>
+
+    <category label="Filters">
+        <setting id="flt_brace" type="bool" label="Text in square braces" default="true" />
+        <setting id="flt_paren" type="bool" label="Text in Parenthesis" default="true" />
+        <setting id="flt_dash_pr" type="bool" label="Line starts with dash" default="true" />
+        <setting id="flt_colon_pr" type="bool" label="Prefixed with Colon" default="true" />
+        <setting id="flt_colon_capped_pr" type="bool" label="Only if all caps" default="true" subsetting="true" enable="eq(-1,true)"/>
+    </category>
+
     <category label="Debug">
         <setting id="debug" type="bool" label="Debugging on" default="false" />
     </category>

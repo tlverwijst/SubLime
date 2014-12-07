@@ -1,3 +1,7 @@
+v1.2
+- Added filter settings
+- Added auto start option
+
 v1.1
 - Fix for too greedy regex
 - Some minor cleanup
