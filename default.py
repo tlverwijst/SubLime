@@ -40,7 +40,7 @@ punct = re.compile('^[\W]+$')
 font_tags = re.compile('(<font[^>]*>)|(<\/font>)')
 
 #specials
-capital_start = re.compile('^[=\*=\*=\*=[\s]*]*[A-Z]+[0-9\s]*:[\s]*') #starting with capitalized word and colon
+capital_start = re.compile('^[=\*=\*=\*=[\s]*]*[A-Z]+[A-Z0-9\s]*:[\s]*') #starting with any word and colon
 dash_start  = re.compile('^[\-]+[\s]*') #lines starting with a dash (-)
 
 replace_tag = re.compile('=\*=\*=\*=[\s]*')
@@ -100,9 +100,9 @@ class Sublime(xbmc.Player):
     def cleanBlacklisted(self, line):
 
         for x in self.blacklist:
-            bl = "%s" % (x.strip())
+            bl = x.strip()
             if bl in line.strip():
-                log("found blacklist item")
+                log("found blacklisted item")
                 line = re.sub(bl, self.__replace__, line)
 
         return line
@@ -177,7 +177,6 @@ class Sublime(xbmc.Player):
                 log("Cancelled by user")
                 return False
 
-
             #  strip outer whitespace characters
             line = line.strip()
 
@@ -191,7 +190,6 @@ class Sublime(xbmc.Player):
                 line = self.simpleClean(line, dash_start)
                 line = self.simpleClean(line, capital_start)
                 line = self.simpleClean(line, font_tags)
-
                 line = self.cleanBlacklisted(line)
 
                 # if the line is empty here, it means it was always empty, so just add it
@@ -268,6 +266,8 @@ class Sublime(xbmc.Player):
 
     def onPlayBackStarted(self):
         self.init_properties()
+
+        #get file being played
         playing = xbmc.Player().getPlayingFile()
         path = os.path.split(playing)[0]
         subsFound = self.findSubs(path)
