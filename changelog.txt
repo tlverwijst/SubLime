@@ -1,3 +1,6 @@
+v1.3
+- Continue directly (no more restarting of video)
+
 v1.2
 - Added filter settings
 - Added auto start option

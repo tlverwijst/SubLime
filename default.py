@@ -291,7 +291,7 @@ class Sublime(xbmc.Player):
         xbmcvfs.rename(__temp_file__, full_file_path);
 
         if current_count==total_files:
-            progressDialog.update(self.getPercentage(100, total_files, current_count), "Done, reloading video")
+            progressDialog.update(self.getPercentage(100, total_files, current_count), "Done")
             xbmc.sleep(500)
 
         return True
@@ -336,9 +336,10 @@ class Sublime(xbmc.Player):
 
                 # stop & start player to refresh the subtitle stream
                 log("resuming" + str(playing))
-                xbmc.Player().stop()
-                xbmc.sleep(1000)
-                xbmc.Player().play(playing)
+                full_file_path = os.path.join(path,f)
+                self.disableSubtitles()
+                self.setSubtitles(full_file_path)
+                xbmc.Player().pause()
 
             else:
                 xbmc.Player().pause()
