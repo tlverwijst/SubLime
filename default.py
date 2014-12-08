@@ -161,7 +161,7 @@ class Sublime(xbmc.Player):
                 # should sublime ignore this file?
                 if not xbmcvfs.exists(full_file_path+'.sublime.ignore') == True:
                     # if there are supported  files, is there already a backup or debug file present?
-                    if xbmcvfs.exists( full_file_path + self.sublime_extension) == False or (xbmcvfs.exists( full_file_path +'.sublime.debug') == False and self.debug == False):
+                    if xbmcvfs.exists( full_file_path + self.sublime_extension) == False or (xbmcvfs.exists( full_file_path +'.sublime.debug') == True and self.debug == False):
                         count = count+1
                         sub_files.append( f )
                         log("Found unprocessed subtitle:" + str(full_file_path) )
