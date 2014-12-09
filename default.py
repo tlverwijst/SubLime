@@ -80,15 +80,17 @@ class Sublime(xbmc.Player):
     def init_properties(self):
         self.debug          = self.getSetting("debug",True)
         self.__replace__    = "=*=*=*="
-        if self.debug == True:
-            self.sublime_extension   = ".sublime.debug"
-        else:
-            self.sublime_extension   = ".sublime.original"
 
         # general
+        if self.debug == True:
+            self.sublime_extension   = ".sublime.debug"
+            self.keep_source         = True
+        else:
+            self.sublime_extension   = ".sublime.original"
+            self.keep_source         = self.getSetting("keep_source",True)
+
         self.show_notifications = self.getSetting("show_notifications",True)
         self.auto_start         = self.getSetting("auto_start",True)
-        self.keep_source        = self.getSetting("keep_source",True)
 
         # filter settings
         self.flt_brace      = self.getSetting("flt_brace",True)
@@ -298,7 +300,9 @@ class Sublime(xbmc.Player):
             # remove the original file
             log("Removing orginal file")
             xbmcvfs.delete(full_file_path)
-
+            if xbmcvfs.exists(full_file_path+'.sublime.debug') == True:
+                log("Removing debug file")
+                xbmcvfs.delete(full_file_path+'.sublime.debug')
             # open file and load into buffer
             f = xbmcvfs.File(full_file_path+'.sublime.ignore','w')
             f.close()

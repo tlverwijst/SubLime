@@ -74,4 +74,3 @@ Tested on Gotham 13.1 (Windows 8.1 & RaspBMC )
 - Only looks for subtitles in same folder as playing video
 - Doesn't wait for other addons (support for [AutoSubs](http://kodi.wiki/view/Add-on:AutoSubs "http://kodi.wiki/view/Add-on:AutoSubs") and [Check Previous Episode](http://kodi.wiki/view/Add-on:XBMC_Check_Previous_Episode "http://kodi.wiki/view/Add-on:XBMC_Check_Previous_Episode") addons are planned for future releases)
 - No option for manual start (planned for future release)
-- Running debug mode on an file thats already cleaned will create a debug file that wont be removed once debug mode is disabled again

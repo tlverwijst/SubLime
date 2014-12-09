@@ -1,3 +1,6 @@
+v1.4.4
+- Always create backup in debug mode
+
 v1.4.3
 - changed version numbering
 - Bugfix for duplicate debug files
