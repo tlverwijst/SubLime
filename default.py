@@ -62,6 +62,7 @@ def confirm(line1, line2="", line3=""):
     dialog = xbmcgui.Dialog()
     return dialog.yesno(__addonname__, str(line1), str(line2), str(line3))
 
+
 # class start
 class Sublime(xbmc.Player):
 
@@ -146,25 +147,33 @@ class Sublime(xbmc.Player):
         count = 0
         sub_files = []
 
-        # get the path of the playing file
-        log('checking for subs in ' + path);
+        log('Checking for subs in ' + path);
 
         # get all the files in the path
         file_list = xbmcvfs.listdir(path)[1]
 
         for f in file_list:
+
             full_file_path = os.path.join(path,f)
 
-            # check if any of them are supported subtitle files
+            # is this file a suppported subtitle
             if os.path.splitext(f)[1] in supported:
 
-                # should sublime ignore this file?
-                if not xbmcvfs.exists(full_file_path+'.sublime.ignore') == True:
-                    # if there are supported  files, is there already a backup or debug file present?
-                    if xbmcvfs.exists( full_file_path + self.sublime_extension) == False or (xbmcvfs.exists( full_file_path +'.sublime.debug') == True and self.debug == False):
-                        count = count+1
-                        sub_files.append( f )
-                        log("Found unprocessed subtitle:" + str(full_file_path) )
+                #is there a debug file and debug mode is enabled?
+                if self.debug == True:
+                    # is there a backup file?
+                    debug_check = xbmcvfs.exists( full_file_path +'.sublime.debug')
+                else:
+                    debug_check = False
+
+                backup_file = xbmcvfs.exists( full_file_path  +'.sublime.original') #+ self.sublime_extension)
+                # ignore this file?
+                ignore_file = xbmcvfs.exists(full_file_path+'.sublime.ignore')
+
+                if not backup_file and not debug_check and not ignore_file:
+                    count = count+1
+                    sub_files.append( f )
+                    log("Found unprocessed subtitle:" + str(full_file_path) )
 
         return {'count': count, 'files':sub_files}
 

@@ -1,3 +1,7 @@
+v1.4.3
+- changed version numbering
+- Bugfix for duplicate debug files
+
 v1.4
 - First beta!
 - Keep source setting added
