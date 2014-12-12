@@ -1,3 +1,6 @@
+v1.5.1
+- Wait for conflicting addons
+
 v1.4.4
 - Always create backup in debug mode
 

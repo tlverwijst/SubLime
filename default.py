@@ -62,7 +62,6 @@ def confirm(line1, line2="", line3=""):
     dialog = xbmcgui.Dialog()
     return dialog.yesno(__addonname__, str(line1), str(line2), str(line3))
 
-
 # class start
 class Sublime(xbmc.Player):
 
@@ -100,6 +99,13 @@ class Sublime(xbmc.Player):
         self.flt_colon_capped_pr = self.getSetting("flt_colon_capped_pr",True)
 
         self.flt_font_tags  = True
+        self.wait = False
+
+        self.externalAddons = []
+        if xbmc.getCondVisibility('System.HasAddon(service.autosubs)'):
+            self.externalAddons.append('autosubs')
+        if xbmc.getCondVisibility('System.HasAddon(script.service.checkpreviousepisode)'):
+            self.externalAddons.append('checkpreviousepisode')
 
         # get blacklist file
         f = xbmcvfs.File(os.path.join(__data__,'blacklist.txt'))
@@ -296,7 +302,7 @@ class Sublime(xbmc.Player):
                 log("Renaming original file")
                 xbmcvfs.rename(full_file_path,full_file_path+self.sublime_extension);
         else:
-            notify('Not backing up file')
+            log('Not backing up file')
             # remove the original file
             log("Removing orginal file")
             xbmcvfs.delete(full_file_path)
@@ -317,8 +323,31 @@ class Sublime(xbmc.Player):
 
         return True
 
+    def onPlayBackResumed(self):
+        self.wait = False
+
+    def onPlayBackStopped(self):
+        self.wait = False
+
+    def onPlayBackEnded(self):
+        self.wait = False
+
     def onPlayBackStarted(self):
         self.init_properties()
+
+        if len(self.externalAddons) > 0:
+            log('Found conflicting addons:' + str(self.externalAddons))
+            xbmc.sleep(2500)
+
+            # addons like autosubs or check_previous_episode will pause the player
+            if xbmc.getCondVisibility('Player.Paused') == True:
+                log("Will wait for playback to continue")
+                self.wait = True
+
+        # sleep until playback resumes
+        while self.wait == True:
+            log('Waiting for other addons')
+            xbmc.sleep(500)
 
         #get file being played
         playing = xbmc.Player().getPlayingFile()
@@ -331,7 +360,8 @@ class Sublime(xbmc.Player):
 
             log('pausing playback')
             #pause playback
-            xbmc.Player().pause()
+            if self.wait == False:
+                xbmc.Player().pause()
 
             if self.auto_start == True:
                 confirmed = True
@@ -356,15 +386,16 @@ class Sublime(xbmc.Player):
                             return
 
                 # stop & start player to refresh the subtitle stream
-                log("resuming" + str(playing))
+                log("Resuming" + str(playing))
                 full_file_path = os.path.join(path,f)
                 self.disableSubtitles()
                 self.setSubtitles(full_file_path)
                 xbmc.Player().pause()
 
             else:
-                xbmc.Player().pause()
                 log("User denied cleaning of files")
+                if self.wait == False:
+                    xbmc.Player().pause()
 
         else:
             log("Nothing to do")

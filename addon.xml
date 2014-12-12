@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon id="service.Sublime"
-    name="Sublime" version="1.4.4" provider-name="Tommie82">
+    name="Sublime" version="1.5.1" provider-name="Tommie82">
     <requires>
         <import addon="xbmc.python" version="2.14.0"/>
     </requires>
