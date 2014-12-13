@@ -52,7 +52,7 @@ def log(msg):
     except UnicodeEncodeError:
         message = '%s: %s' % (__addonname__, str(msg.encode('utf-8', 'ignore')) )
 
-    xbmc.log(msg=message, level=xbmc.LOGDEBUG)
+    print message
 
 def notify(msg):
     dialog = xbmcgui.Dialog()
@@ -250,7 +250,6 @@ class Sublime(xbmc.Player):
 
                 # clean replacement tags if we 're not in debug mode
                 if self.debug == False:
-                    log('removing debug tags')
                     line = self.cleanReplacedTags(line)
 
             # add line if is not empty
@@ -351,6 +350,7 @@ class Sublime(xbmc.Player):
 
         #get file being played
         playing = xbmc.Player().getPlayingFile()
+        xbmc.sleep(1000)
         path = os.path.split(playing)[0]
 
         subsFound = self.findSubs(path)
