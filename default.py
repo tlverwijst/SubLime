@@ -390,6 +390,8 @@ class Sublime(xbmc.Player):
                 full_file_path = os.path.join(path,f)
                 self.disableSubtitles()
                 self.setSubtitles(full_file_path)
+                # jump back to start
+                xbmc.Player().seekTime(0)
                 xbmc.Player().pause()
 
             else:

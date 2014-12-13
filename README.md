@@ -72,5 +72,5 @@ Tested on Gotham 13.1 (Windows 8.1 & RaspBMC )
 `eg <i>-Let's go </i>, <font>Policeofficer: Please step back!</font>`
 - Processes all (unprocessed) subtitles in folder, even if current video doesn't has a subtitle (option for only current playing video coming in future release)
 - Only looks for subtitles in same folder as playing video
-- Doesn't wait for other addons (support for [AutoSubs](http://kodi.wiki/view/Add-on:AutoSubs "http://kodi.wiki/view/Add-on:AutoSubs") and [Check Previous Episode](http://kodi.wiki/view/Add-on:XBMC_Check_Previous_Episode "http://kodi.wiki/view/Add-on:XBMC_Check_Previous_Episode") addons are planned for future releases)
 - No option for manual start (planned for future release)
+- Waiting for other addons does not work when starting from shelf
