@@ -1,5 +1,5 @@
 # SubLime #
-A subtitle cleaning service for Kodi (formerly known as XBMC)
+A subtitle cleaning service for Kodi (XBMC)
 
 Current version: 1.5
 
@@ -20,7 +20,7 @@ SubLime lets you choose which markup you want to keep, and which you want to fil
 
 - Select a file from the [releases page](https://github.com/tlverwijst/SubLime/releases "https://github.com/tlverwijst/SubLime/releases"),
 - Install from zip:[How To..](http://kodi.wiki/view/How_to_install_an_Add-on_from_a_zip_file "http://kodi.wiki/view/How_to_install_an_Add-on_from_a_zip_file")
-
+- Reboot Kodi
 
 ## Features ##
 

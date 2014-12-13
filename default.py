@@ -345,7 +345,6 @@ class Sublime(xbmc.Player):
 
         # sleep until playback resumes
         while self.wait == True:
-            log('Waiting for other addons')
             xbmc.sleep(500)
 
         #get file being played
