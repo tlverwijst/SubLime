@@ -90,6 +90,7 @@ class Sublime(xbmc.Player):
 
         self.show_notifications = self.getSetting("show_notifications",True)
         self.auto_start         = self.getSetting("auto_start",True)
+        self.current_only       = self.getSetting("current_only",True)
 
         # filter settings
         self.flt_brace      = self.getSetting("flt_brace",True)
@@ -113,6 +114,18 @@ class Sublime(xbmc.Player):
         f.close()
         self.blacklist = b.split('\n')
 
+        # set supported languages
+        lang_file = os.path.join(__data__,'languages.txt')
+        if xbmcvfs.exists(lang_file):
+            log('Using languages from file')
+            f = xbmcvfs.File(lang_file)
+            b = f.read()
+            f.close()
+            self.langs = b.split('\n')
+        else:
+            log('Use default language list')
+            self.langs = ['de','en','es','fr','nl']
+
     def cleanReplacedTags(self, line):
         try:
             line = re.sub(replace_tag,'', line)
@@ -132,7 +145,7 @@ class Sublime(xbmc.Player):
         for x in self.blacklist:
             bl = x.strip()
             if bl in line.strip():
-                log("found blacklisted item")
+                log("Found blacklisted item")
                 line = re.sub(bl, self.__replace__, line)
 
         return line
@@ -150,12 +163,21 @@ class Sublime(xbmc.Player):
 
         return int(percentage)
 
-    def findSubs(self, path):
+    def findSubs(self, path, filename):
 
         count = 0
         sub_files = []
 
         log('Checking for subs in ' + path);
+
+        check_list =[]
+        fname_body = os.path.splitext(filename)[0]
+
+        check_list.append(fname_body)
+
+        # add country code to file
+        for l in self.langs:
+            check_list.append(fname_body +'.'+l)
 
         # get all the files in the path
         file_list = xbmcvfs.listdir(path)[1]
@@ -163,25 +185,29 @@ class Sublime(xbmc.Player):
         for f in file_list:
 
             full_file_path = os.path.join(path,f)
+            checking = os.path.splitext(f)[0]
 
-            # is this file a suppported subtitle
-            if os.path.splitext(f)[1] in supported:
+            # current file in checklist or 'current file only' option disabled
+            if (self.current_only==True and checking in check_list ) or self.current_only==False:
 
-                #is there a debug file and debug mode is enabled?
-                if self.debug == True:
-                    # is there a backup file?
-                    debug_check = xbmcvfs.exists( full_file_path +'.sublime.debug')
-                else:
-                    debug_check = False
+                # is this file a suppported subtitle
+                if os.path.splitext(f)[1] in supported:
 
-                backup_file = xbmcvfs.exists( full_file_path  +'.sublime.original') #+ self.sublime_extension)
-                # ignore this file?
-                ignore_file = xbmcvfs.exists(full_file_path+'.sublime.ignore')
+                    #is there a debug file and debug mode is enabled?
+                    if self.debug == True:
+                        # is there a backup file?
+                        debug_check = xbmcvfs.exists( full_file_path +'.sublime.debug')
+                    else:
+                        debug_check = False
 
-                if not backup_file and not debug_check and not ignore_file:
-                    count = count+1
-                    sub_files.append( f )
-                    log("Found unprocessed subtitle:" + str(full_file_path) )
+                    backup_file = xbmcvfs.exists( full_file_path  +'.sublime.original') #+ self.sublime_extension)
+                    # ignore this file?
+                    ignore_file = xbmcvfs.exists(full_file_path+'.sublime.ignore')
+
+                    if not backup_file and not debug_check and not ignore_file:
+                        count = count+1
+                        sub_files.append( f )
+                        log("Found unprocessed subtitle:" + str(full_file_path) )
 
         return {'count': count, 'files':sub_files}
 
@@ -349,15 +375,17 @@ class Sublime(xbmc.Player):
 
         #get file being played
         playing = xbmc.Player().getPlayingFile()
+        # timeout is needed for Pi
         xbmc.sleep(1000)
-        path = os.path.split(playing)[0]
+        path        = os.path.split(playing)[0]
+        filename    = os.path.split(playing)[1]
 
-        subsFound = self.findSubs(path)
+        subsFound = self.findSubs(path, filename)
         sub_file_count = subsFound['count']
 
         if sub_file_count >0:
 
-            log('pausing playback')
+            log("pausing playback")
             #pause playback
             if self.wait == False:
                 xbmc.Player().pause()
@@ -385,12 +413,14 @@ class Sublime(xbmc.Player):
                             return
 
                 # stop & start player to refresh the subtitle stream
-                log("Resuming" + str(playing))
+                log("Resuming " + str(playing))
                 full_file_path = os.path.join(path,f)
                 self.disableSubtitles()
                 self.setSubtitles(full_file_path)
-                # jump back to start
-                xbmc.Player().seekTime(0)
+
+                # jump back to start if not passed 10 secs
+                if xbmc.Player().getTime() < 10:
+                    xbmc.Player().seekTime(0)
                 xbmc.Player().pause()
 
             else:

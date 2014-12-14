@@ -1,7 +1,7 @@
 # SubLime #
 A subtitle cleaning service for Kodi (XBMC)
 
-Current version: 1.5
+Current version: 1.6
 
 Licensed under the [GNU General Public License, version 2](http://www.gnu.org/licenses/gpl-2.0.html "http://www.gnu.org/licenses/gpl-2.0.html")
 
@@ -20,7 +20,6 @@ SubLime lets you choose which markup you want to keep, and which you want to fil
 
 - Select a file from the [releases page](https://github.com/tlverwijst/SubLime/releases "https://github.com/tlverwijst/SubLime/releases"),
 - Install from zip:[How To..](http://kodi.wiki/view/How_to_install_an_Add-on_from_a_zip_file "http://kodi.wiki/view/How_to_install_an_Add-on_from_a_zip_file")
-- Reboot Kodi
 
 ## Features ##
 
@@ -74,3 +73,4 @@ Tested on Gotham 13.1 (Windows 8.1 & RaspBMC )
 - Only looks for subtitles in same folder as playing video
 - No option for manual start (planned for future release)
 - Waiting for other addons does not work when starting from shelf
+- Sets wrong subtitle when the current video is not the last item being cleaned
