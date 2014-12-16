@@ -67,10 +67,4 @@ Tested on Gotham 13.1 (Windows 8.1 & RaspBMC )
 
 ## Known Issues ##
 
-- Dash- and colon filters dont work when line is inside a  markup tag  
-`eg <i>-Let's go </i>, <font>Policeofficer: Please step back!</font>`
-- Processes all (unprocessed) subtitles in folder, even if current video doesn't has a subtitle (option for only current playing video coming in future release)
-- Only looks for subtitles in same folder as playing video
-- No option for manual start (planned for future release)
-- Waiting for other addons does not work when starting from shelf
-- Sets wrong subtitle when the current video is not the last item being cleaned
+See the wiki: [https://github.com/tlverwijst/SubLime/wiki/Known-Issues](https://github.com/tlverwijst/SubLime/wiki/Known-Issues "https://github.com/tlverwijst/SubLime/wiki/Known-Issues")

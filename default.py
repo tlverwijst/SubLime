@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 """
 Sublime for Kodi
@@ -31,12 +32,17 @@ supported = ['.srt']
 #including start & end in different lines
 paren = re.compile('(\((.+)?\)|\((.+)?|^(.+)?\))')
 brace = re.compile('(\[(.+)?\]|\[(.+)?|^(.+)?\])')
+music = re.compile('([♩♪♫♭♮♯]+(.+)?[♩♪♫♭♮♯]+|[♩♪♫♭♮♯]+(.+)?|^(.+)?[♩♪♫♭♮♯]+)')
+
 
 # interpunction -> non alphanumeric leftovers
 punct = re.compile('^[\W]+$')
 
 # tags
 font_tags = re.compile('(<font[^>]*>)|(<\/font>)')
+
+# emptylist for blacklisted items
+bl_reg = []
 
 #specials
 colon_prefix = re.compile('^[=\*=\*=\*=[\s]*]*[A-z]+[A-z0-9\s]*:[\s]*') #starting with any word and colon
@@ -112,7 +118,9 @@ class Sublime(xbmc.Player):
         f = xbmcvfs.File(os.path.join(__data__,'blacklist.txt'))
         b = f.read()
         f.close()
-        self.blacklist = b.split('\n')
+        bl_lines = b.splitlines()
+        for bl in bl_lines:
+            bl_reg.append(re.compile('^[=\*=\*=\*=[\s]*]*'+bl, re.IGNORECASE))
 
         # set supported languages
         lang_file = os.path.join(__data__,'languages.txt')
@@ -121,7 +129,7 @@ class Sublime(xbmc.Player):
             f = xbmcvfs.File(lang_file)
             b = f.read()
             f.close()
-            self.langs = b.split('\n')
+            self.langs = b.splitlines()
         else:
             log('Use default language list')
             self.langs = ['de','en','es','fr','nl']
@@ -142,10 +150,9 @@ class Sublime(xbmc.Player):
 
     def cleanBlacklisted(self, line):
 
-        for x in self.blacklist:
-            bl = x.strip()
-            if bl in line.strip():
-                log("Found blacklisted item")
+        for bl in bl_reg:
+
+            if bl.match(line.strip()):
                 line = re.sub(bl, self.__replace__, line)
 
         return line
@@ -231,7 +238,8 @@ class Sublime(xbmc.Player):
         f.close()
 
         # split lines into list
-        data = b.split('\n')
+        data = b.splitlines()
+
 
         # number of lines in the file
         total_lines = len(data)
@@ -257,6 +265,8 @@ class Sublime(xbmc.Player):
                     line = self.simpleClean(line, brace)
                 if self.flt_dash == True:
                     line = self.simpleClean(line, dash_start)
+                if self.flt_music == True:
+                    line = self.simpleClean(line, music)
 
                 if self.flt_colon_pr == True:
                     if self.flt_colon_capped_pr == True:
@@ -269,7 +279,7 @@ class Sublime(xbmc.Player):
 
                 # if the line is empty here, it means it was always empty, so just add it
                 if len(line)==0:
-                    cleanlines.append(line+'\n')
+                    cleanlines.append(line+os.linesep)
 
                 # remove leftover particles (., etc)
                 line = self.simpleClean(line, punct)
@@ -281,7 +291,7 @@ class Sublime(xbmc.Player):
             # add line if is not empty
             if len(line)>0:
                 # add line to cleanlines list
-                cleanlines.append(line+'\n')
+                cleanlines.append(line+os.linesep)
 
             progress = progress+1
             percentage = (float(progress)/total_lines)*90
