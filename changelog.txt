@@ -1,3 +1,6 @@
+v1.6.4
+- Minor blacklist and regex changes
+
 v1.6.3
 - compatibility update for Raspberry Pi
 
