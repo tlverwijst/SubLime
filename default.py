@@ -32,8 +32,7 @@ supported = ['.srt']
 #including start & end in different lines
 paren = re.compile('(\((.+)?\)|\((.+)?|^(.+)?\))')
 brace = re.compile('(\[(.+)?\]|\[(.+)?|^(.+)?\])')
-music = re.compile('([♩♪♫♭♮♯]+(.+)?[♩♪♫♭♮♯]+|[♩♪♫♭♮♯]+(.+)?|^(.+)?[♩♪♫♭♮♯]+)')
-
+music = re.compile('([♩♪♫♭♮♯]+(.+)?|^(.+)?[♩♪♫♭♮♯]+|[♩♪♫♭♮♯]+(.+)?[♩♪♫♭♮♯]+)')
 
 # interpunction -> non alphanumeric leftovers
 punct = re.compile('^[\W]+$')
@@ -45,8 +44,8 @@ font_tags = re.compile('(<font[^>]*>)|(<\/font>)')
 bl_reg = []
 
 #specials
-colon_prefix = re.compile('^[=\*=\*=\*=[\s]*]*[A-z]+[A-z0-9\s]*:[\s]*') #starting with any word and colon
-colon_prefix_capped = re.compile('^[=\*=\*=\*=[\s]*]*[A-Z]+[A-Z0-9\s]*:[\s]*') #starting with capitalized word and colon
+colon_prefix = re.compile('^[=\*=\*=\*=[\s]*]*[A-z]+[A-z0-9\s]*:[^0-9{2}][\s]*') #starting with any word and colon
+colon_prefix_capped = re.compile('^[=\*=\*=\*=[\s]*]*[A-Z]+[A-Z0-9\s]*:[^0-9{2}][\s]*') #starting with capitalized word and colon
 dash_start  = re.compile('^[\-]+[\s]*') #lines starting with a dash (-)
 
 replace_tag = re.compile('=\*=\*=\*=[\s]*')
