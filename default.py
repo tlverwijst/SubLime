@@ -100,6 +100,7 @@ class Sublime(xbmc.Player):
         # filter settings
         self.flt_brace      = self.getSetting("flt_brace",True)
         self.flt_paren      = self.getSetting("flt_paren",True)
+        self.flt_music      = self.getSetting("flt_music",True)
         self.flt_dash       = self.getSetting("flt_dash_pr",True)
         self.flt_colon_pr   = self.getSetting("flt_colon_pr",True)
         self.flt_colon_capped_pr = self.getSetting("flt_colon_capped_pr",True)
