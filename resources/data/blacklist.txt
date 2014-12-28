@@ -7,6 +7,7 @@ Subtitles by(.+)?
 Subtitles downloaded from www.OpenSubtitles.org
 Subtitles edited by LeapinLar
 Support us and become VIP member
-Sync(ed)* and correct(ed|ion[s]*)+ by(.+)?
+Sync(ed)* (and|&)+ correct(ed|ion[s]*)+ by(.+)?
 to remove all ads from OpenSubtitles.org
 www.addic7ed.com
+Original air date(.+)?
