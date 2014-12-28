@@ -32,8 +32,7 @@ supported = ['.srt']
 #including start & end in different lines
 paren = re.compile('(\((.+)?\)|\((.+)?|^(.+)?\))')
 brace = re.compile('(\[(.+)?\]|\[(.+)?|^(.+)?\])')
-music = re.compile('([♩♪♫♭♮♯]+(.+)?[♩♪♫♭♮♯]+|[♩♪♫♭♮♯]+(.+)?|^(.+)?[♩♪♫♭♮♯]+)')
-
+music = re.compile('([♩♪♫♭♮♯]+(.+)?|^(.+)?[♩♪♫♭♮♯]+|[♩♪♫♭♮♯]+(.+)?[♩♪♫♭♮♯]+)')
 
 # interpunction -> non alphanumeric leftovers
 punct = re.compile('^[\W]+$')
