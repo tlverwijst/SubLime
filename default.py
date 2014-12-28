@@ -14,9 +14,9 @@ import xbmcgui
 import xbmcvfs
 
 __addon__        = xbmcaddon.Addon()
-__addonversion__ = __addon__.getAddonInfo('version')
 __addonid__      = __addon__.getAddonInfo('id')
 __addonname__    = __addon__.getAddonInfo('name')
+__addonversion__ = __addon__.getAddonInfo('version')
 
 ################
 # PATHS
