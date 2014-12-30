@@ -1,3 +1,6 @@
+v1.6.5
+- Inner tag replacements
+
 v1.6.4
 - Minor blacklist and regex changes
 
