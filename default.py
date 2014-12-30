@@ -32,7 +32,7 @@ supported = ['.srt']
 #including start & end in different lines
 paren = re.compile('(\((.+)?\)|\((.+)?|^(.+)?\))')
 brace = re.compile('(\[(.+)?\]|\[(.+)?|^(.+)?\])')
-music = re.compile('([♩♪♫♭♮♯]+(.+)?|^(.+)?[♩♪♫♭♮♯]+|[♩♪♫♭♮♯]+(.+)?[♩♪♫♭♮♯]+)')
+music = re.compile('([♩♪♫♭♮♯]+(.+)?[♩♪♫♭♮♯]+|[♩♪♫♭♮♯]+(.+)?|^(.+)?[♩♪♫♭♮♯]+)')
 
 # interpunction -> non alphanumeric leftovers
 punct = re.compile('^[\W]+$')
@@ -44,10 +44,15 @@ font_tags = re.compile('(<font[^>]*>)|(<\/font>)')
 bl_reg = []
 
 #specials
-colon_prefix = re.compile('^[=\*=\*=\*=[\s]*]*[A-z]+[A-z0-9\s]*:[^0-9{2}][\s]*') #starting with any word and colon
-colon_prefix_capped = re.compile('^[=\*=\*=\*=[\s]*]*[A-Z]+[A-Z0-9\s]*:[^0-9{2}][\s]*') #starting with capitalized word and colon
-dash_start  = re.compile('^[\-]+[\s]*') #lines starting with a dash (-)
+#starting with any word and colon
+colon_prefix        = re.compile('(^(<[A-z]+[^>]*>)*[=\*=\*=\*=[\s]*]*[A-z]+[\w\s]*:[^0-9{2}][\s]*)')
+#starting with capitalized word and colon
+colon_prefix_capped = re.compile('(^[<[A-z]+[^>]*>]*[=\*=\*=\*=[\s]*]*[A-Z]+[\w\s]*:[^0-9{2}][\s]*)')
 
+#lines starting with a dash (-)
+dash_start      = re.compile('(^(<[A-z]+[^>]*>)*[\-]+[\s]*)')
+
+start_tag   = re.compile('(<[A-z]+[^>]*>)')
 replace_tag = re.compile('=\*=\*=\*=[\s]*')
 
 #global functions
@@ -141,11 +146,18 @@ class Sublime(xbmc.Player):
             pass
         return line
 
-    def simpleClean(self, line, regex):
+    def cleanLine(self, line, regex):
         try:
-            line = re.sub(regex, self.__replace__, line)
+            # is it inside a markup tag?
+            match = regex.match(line).group(1)
+            tag   = start_tag.match(match).group(1)
+            line = re.sub(match, tag+self.__replace__, line)
         except:
-            pass
+            # just try a simple clean
+            try:
+                line = re.sub(regex, self.__replace__, line)
+            except:
+                pass
         return line
 
     def cleanBlacklisted(self, line):
@@ -260,21 +272,21 @@ class Sublime(xbmc.Player):
             if dirty == True:
 
                 if self.flt_paren == True:
-                    line = self.simpleClean(line, paren)
+                    line = self.cleanLine(line, paren)
                 if self.flt_brace == True:
-                    line = self.simpleClean(line, brace)
+                    line = self.cleanLine(line, brace)
                 if self.flt_dash == True:
-                    line = self.simpleClean(line, dash_start)
+                    line = self.cleanLine(line, dash_start)
                 if self.flt_music == True:
-                    line = self.simpleClean(line, music)
+                    line = self.cleanLine(line, music)
 
                 if self.flt_colon_pr == True:
                     if self.flt_colon_capped_pr == True:
-                        line = self.simpleClean(line, colon_prefix_capped)
+                        line = self.cleanLine(line, colon_prefix_capped)
                     else:
-                        line = self.simpleClean(line, colon_prefix)
+                        line = self.cleanLine(line, colon_prefix)
 
-                line = self.simpleClean(line, font_tags)
+                line = self.cleanLine(line, font_tags)
                 line = self.cleanBlacklisted(line)
 
                 # if the line is empty here, it means it was always empty, so just add it
@@ -282,7 +294,7 @@ class Sublime(xbmc.Player):
                     cleanlines.append(line+os.linesep)
 
                 # remove leftover particles (., etc)
-                line = self.simpleClean(line, punct)
+                line = self.cleanLine(line, punct)
 
                 # clean replacement tags if we 're not in debug mode
                 if self.debug == False:
