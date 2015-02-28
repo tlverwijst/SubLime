@@ -3,11 +3,10 @@ Best watched using Open Subtitles MKV Player
 Check out www.filebot.net today
 contact www.OpenSubtitles.org today
 Organize your media and download subtitles
-Subtitles by(.+)?
-Subtitles downloaded from www.OpenSubtitles.org
-Subtitles edited by LeapinLar
+Subtitles (downloaded|edited)+ (from|by)+(.+)?
 Support us and become VIP member
 Sync(ed)* (and|&)+ correct(ed|ion[s]*)+ by(.+)?
 to remove all ads from OpenSubtitles.org
 www.addic7ed.com
 Original air date(.+)?
+Shop this show's fashion on LookLive.com
